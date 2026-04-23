@@ -2,7 +2,7 @@
 const nextConfig = {
   output: 'export',
   images: { unoptimized: true },
-  // basePath: '/dinamica-mutua',
+  basePath: '/dinamica-mutua',
 }
 
 module.exports = nextConfig
