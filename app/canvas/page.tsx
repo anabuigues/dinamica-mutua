@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { obtenerSesion, cerrarSesion } from '@/lib/session'
+import { exportarCanvasPDF } from '@/lib/exportar'
 import type { SesionUsuario, TraspasoItem } from '@/types'
 
 // ─── Tipos locales ────────────────────────────────────────────────────────────
@@ -199,6 +200,7 @@ export default function CanvasPage() {
   })
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
   const [loading, setLoading] = useState(true)
+  const [exporting, setExporting] = useState(false)
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const isFirstLoad = useRef(true)
 
@@ -301,6 +303,25 @@ export default function CanvasPage() {
     }))
   }
 
+  // ── Exportar PDF ────────────────────────────────────────────────────────────
+  async function handleExportPDF() {
+    if (!sesion) return
+    setExporting(true)
+    await exportarCanvasPDF({
+      nombre: sesion.nombre,
+      area: sesion.area,
+      updated_at: updatedAt ?? new Date().toISOString(),
+      mision: canvas.mision,
+      retos_talento: canvas.retos_talento,
+      retos_procesos: canvas.retos_procesos,
+      retos_cultura: canvas.retos_cultura,
+      retos_otros: canvas.retos_otros,
+      traspasar: canvas.traspasar,
+      recibir: canvas.recibir,
+    })
+    setExporting(false)
+  }
+
   // ── Loading / sin sesión ───────────────────────────────────────────────────
   if (loading) {
     return (
@@ -332,6 +353,17 @@ export default function CanvasPage() {
           </div>
           <div className="flex items-center gap-4">
             <SaveIndicator status={saveStatus} />
+            <button
+              id="btn-export-pdf"
+              onClick={handleExportPDF}
+              disabled={exporting || loading}
+              className="hidden sm:flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-brand-blue-mid/30 text-brand-blue-mid hover:bg-brand-blue-mid hover:text-white transition-all font-body disabled:opacity-40"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+              </svg>
+              {exporting ? 'Exportando…' : 'PDF'}
+            </button>
             <Link
               href="/dashboard"
               className="hidden sm:block text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors"
