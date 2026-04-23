@@ -94,8 +94,8 @@ export default function LoginPage() {
         rol: u.rol,
       })
 
-      // Redirigir al canvas
-      router.push('/canvas')
+      // Redirigir según rol
+      router.push(u.rol === 'superusuario' ? '/admin' : '/canvas')
     } catch (err) {
       console.error('Error en login:', err)
       setErrors({ general: 'Error inesperado. Inténtalo de nuevo.' })
