@@ -6,30 +6,11 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { generarIdentificador, generarPassword } from '@/lib/utils/generateCredentials'
 import Button from '@/components/ui/Button'
-import { Input, Select } from '@/components/ui/Input'
+import { Input } from '@/components/ui/Input'
 import Card, { CardBody, CardHeader } from '@/components/ui/Card'
 import bcrypt from 'bcryptjs'
 
-const AREAS = [
-  { value: 'Actuarial', label: 'Actuarial' },
-  { value: 'Comercial', label: 'Comercial' },
-  { value: 'Comunicación', label: 'Comunicación' },
-  { value: 'Cumplimiento Normativo', label: 'Cumplimiento Normativo' },
-  { value: 'Digital', label: 'Digital' },
-  { value: 'Financiero', label: 'Financiero' },
-  { value: 'HIPOS', label: 'HIPOS' },
-  { value: 'Inversiones', label: 'Inversiones' },
-  { value: 'Jurídico', label: 'Jurídico' },
-  { value: 'Marketing', label: 'Marketing' },
-  { value: 'Operaciones', label: 'Operaciones' },
-  { value: 'Personas', label: 'Personas (RRHH)' },
-  { value: 'Prestaciones', label: 'Prestaciones' },
-  { value: 'Reaseguro', label: 'Reaseguro' },
-  { value: 'Riesgos', label: 'Riesgos' },
-  { value: 'Suscripción', label: 'Suscripción' },
-  { value: 'Tecnología', label: 'Tecnología' },
-  { value: 'Otra', label: 'Otra área' },
-]
+const AREAS_PLACEHOLDER = 'Ej: Tecnología, Comercial, Riesgos…'
 
 export default function RegistroPage() {
   const router = useRouter()
@@ -43,8 +24,8 @@ export default function RegistroPage() {
     if (!nombre.trim() || nombre.trim().length < 2) {
       newErrors.nombre = 'Introduce tu nombre completo (mínimo 2 caracteres)'
     }
-    if (!area) {
-      newErrors.area = 'Selecciona tu área'
+    if (!area.trim()) {
+      newErrors.area = 'Indica tu área'
     }
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -159,13 +140,14 @@ export default function RegistroPage() {
                   autoFocus
                 />
 
-                <Select
+                <Input
                   id="area"
                   label="Área"
+                  placeholder={AREAS_PLACEHOLDER}
                   value={area}
                   onChange={(e) => setArea(e.target.value)}
                   error={errors.area}
-                  options={AREAS}
+                  autoComplete="organization"
                 />
 
                 {errors.general && (
