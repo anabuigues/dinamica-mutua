@@ -333,10 +333,16 @@ export default function CanvasPage() {
           <div className="flex items-center gap-4">
             <SaveIndicator status={saveStatus} />
             <Link
+              href="/dashboard"
+              className="hidden sm:block text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors"
+            >
+              Dashboard
+            </Link>
+            <Link
               href="/canvas/otros"
               className="hidden sm:block text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors"
             >
-              Ver equipo
+              Equipo
             </Link>
             <div className="hidden sm:flex items-center gap-2">
               <div className="w-7 h-7 rounded-full bg-brand-blue-dark/10 flex items-center justify-center">
