@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Open+Sans:wght@400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Open Sans', sans-serif;
+    color: #343A40;
+    background-color: #F8F9FA;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    color: #003087;
+  }
+}
+
+@layer components {
+  /* Botón primario CTA pink */
+  .btn-primary {
+    @apply bg-brand-pink text-white font-semibold uppercase tracking-wide px-6 py-3 rounded-md shadow-sm transition-all duration-200 hover:bg-brand-pink-hover hover:shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed;
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  /* Botón secundario outline azul */
+  .btn-secondary {
+    @apply bg-transparent border-2 border-brand-blue-mid text-brand-blue-mid font-semibold px-6 py-3 rounded-md transition-all duration-200 hover:bg-brand-blue-mid hover:text-white active:scale-95 disabled:opacity-50;
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  /* Botón secundario relleno azul */
+  .btn-blue {
+    @apply bg-brand-blue-mid text-white font-semibold px-6 py-3 rounded-md shadow-sm transition-all duration-200 hover:bg-brand-blue-dark hover:shadow-md active:scale-95 disabled:opacity-50;
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  /* Input de formulario */
+  .form-input {
+    @apply w-full border border-neutral-200 rounded-md px-4 py-2.5 text-sm text-neutral-800 bg-white placeholder-neutral-400 transition-all duration-200 focus:outline-none focus:border-brand-blue-mid focus:ring-2 focus:ring-brand-blue-mid/20;
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  .form-input.error {
+    @apply border-semantic-error focus:border-semantic-error focus:ring-semantic-error/20;
+  }
+
+  /* Label de formulario */
+  .form-label {
+    @apply block text-sm font-semibold text-neutral-800 mb-1.5;
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  /* Card base */
+  .card {
+    @apply bg-white rounded-xl border border-neutral-200 shadow-sm;
+  }
+
+  /* Hero section */
+  .hero-section {
+    background: linear-gradient(135deg, #003087 0%, #0050B3 100%);
+    @apply py-20 px-6 text-center;
+  }
+
+  /* Navigation pill activa */
+  .nav-pill-active {
+    @apply bg-brand-blue-dark text-white rounded-full px-4 py-2 text-sm font-semibold transition-all duration-200;
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  /* Navigation pill inactiva */
+  .nav-pill {
+    @apply bg-neutral-100 text-neutral-800 rounded-full px-4 py-2 text-sm hover:bg-neutral-200 transition-all duration-200;
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  /* Badge/chip */
+  .badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider;
+  }
+
+  /* Credencial destacada */
+  .credential-box {
+    @apply bg-brand-blue-dark/5 border-2 border-brand-blue-dark/20 rounded-lg px-6 py-4 font-mono text-2xl font-bold text-brand-blue-dark tracking-widest text-center select-all;
+  }
+}
+
+@layer utilities {
+  .text-display {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+  }
+
+  .text-body {
+    font-family: 'Open Sans', sans-serif;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
