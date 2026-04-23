@@ -382,7 +382,7 @@ export default function AdminPage() {
                           <div className="flex items-center justify-end gap-2">
                             {p.canvasId && (
                               <Link
-                                href={`/canvas/${p.canvasId}`}
+                                href={`/canvas/ver?id=${p.canvasId}`}
                                 className="text-xs text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors"
                               >
                                 Ver →

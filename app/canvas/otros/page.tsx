@@ -159,7 +159,7 @@ export default function OtrosCanvasPage() {
               return (
                 <Link
                   key={p.id}
-                  href={esPropio ? '/canvas' : `/canvas/${p.id}`}
+                  href={esPropio ? '/canvas' : `/canvas/ver?id=${p.id}`}
                   className="group block bg-white rounded-xl border border-neutral-200 hover:border-brand-blue-mid hover:shadow-md transition-all overflow-hidden"
                 >
                   <div className={`px-4 py-3 ${esPropio ? 'bg-brand-pink' : 'bg-brand-blue-dark'}`}>
