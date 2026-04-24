@@ -146,51 +146,33 @@ export default function ModeloOrganizativoPage() {
         {/* Scroll horizontal en móvil */}
         <div className="overflow-x-auto pb-6">
           <div className="min-w-[1000px] grid grid-cols-7 gap-4">
-            {/* Fila 1: Cabeceras */}
-            <div className="col-span-1 text-center font-display text-xs lg:text-sm uppercase text-brand-blue-dark px-2">
-              Asegurador y Ecosistema
-            </div>
-            <div className="col-span-1 text-center font-display text-xs lg:text-sm uppercase text-brand-blue-dark px-2">
-              Patrimonial y Finanzas
-            </div>
-            <div className="col-span-1 text-center font-display text-xs lg:text-sm uppercase text-brand-blue-dark px-2">
-              Movilidad
-            </div>
-            <div className="col-span-1 text-center font-display text-xs lg:text-sm uppercase text-brand-blue-dark px-2">
-              Sistemas corporativos
-            </div>
-            <div className="col-span-1 text-center font-display text-xs lg:text-sm uppercase text-brand-blue-dark px-2">
-              CISO global
-            </div>
-            <div className="col-span-1 text-center font-display text-xs lg:text-sm uppercase text-brand-blue-dark px-2">
-              Platf. de desarrollo
-            </div>
-            <div className="col-span-1 text-center font-display text-xs lg:text-sm uppercase text-brand-blue-dark px-2">
-              Tech support
-            </div>
-
-            {/* Fila 2: Equipos de negocio + Columnas verticales (CISO, Platf, Tech) */}
+            {/* Fila 1: Equipos de negocio (1-4) */}
             <Cell
               id="equipos-asegurador"
-              titulo="Equipos de negocio y tecnología co-localizados"
+              titulo="Asegurador y Ecosistema"
+              descripcion="Equipos de negocio y tecnología co-localizados"
               color="blue"
             />
             <Cell
               id="equipos-patrimonial"
-              titulo="Equipos de negocio y tecnología co-localizados"
+              titulo="Patrimonial y Finanzas"
+              descripcion="Equipos de negocio y tecnología co-localizados"
               color="blue"
             />
             <Cell
               id="equipos-movilidad"
-              titulo="Equipos de negocio y tecnología co-localizados"
+              titulo="Movilidad"
+              descripcion="Equipos de negocio y tecnología co-localizados"
               color="blue"
             />
             <Cell
               id="equipos-sistemas"
-              titulo="Equipos de negocio y tecnología co-localizados"
+              titulo="Sistemas corporativos"
+              descripcion="Equipos de negocio y tecnología co-localizados"
               color="blue"
             />
 
+            {/* Columnas verticales (CISO, Platf, Tech) - Ocupan 5 filas */}
             <Cell
               id="ciso-global"
               titulo="CISO global"
