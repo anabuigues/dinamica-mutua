@@ -1,18 +1,27 @@
 'use client'
 
 export default function LogoMutua({ className = '', variant = 'dark' }: { className?: string, variant?: 'dark' | 'light' }) {
-  const textColor = variant === 'light' ? 'text-white' : 'text-[#003087]'
+  const primaryColor = variant === 'light' ? '#FFFFFF' : '#003087'
+  const archColor = variant === 'light' ? 'rgba(255,255,255,0.3)' : '#3DA1D9'
   
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
-      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="32" height="32" rx="4" fill={variant === 'light' ? 'white' : '#003087'}/>
-        <path d="M7 11V21H9.5V14.5L12.5 18L15.5 14.5V21H18V11H15.5L12.5 14.5L9.5 11H7Z" fill={variant === 'light' ? '#003087' : 'white'}/>
+    <div className={`flex items-center gap-0 ${className}`}>
+      <svg width="220" height="50" viewBox="0 0 220 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+        {/* Arco/Domo característico */}
+        <path d="M5 40V22C5 13.7157 11.7157 7 20 7C28.2843 7 35 13.7157 35 22V40H5Z" fill={archColor}/>
+        
+        {/* Letras MM */}
+        <text x="3" y="36" fill={primaryColor} font-family="Arial, sans-serif" font-weight="900" font-size="20" letter-spacing="-1.5">MM</text>
+        
+        {/* Texto MUTUA */}
+        <text x="42" y="36" fill={primaryColor} font-family="Arial, sans-serif" font-weight="900" font-size="22" letter-spacing="-0.5">MUTUA</text>
+        
+        {/* Texto MADRILEÑA */}
+        <text x="120" y="36" fill={primaryColor} font-family="Arial, sans-serif" font-weight="300" font-size="22" letter-spacing="0.5">MADRILEÑA</text>
+        
+        {/* Tilde de la Ñ */}
+        <path d="M195 15C196.5 13.5 198.5 13.5 200 15" stroke={primaryColor} strokeWidth="1.5" strokeLinecap="round"/>
       </svg>
-      <div className="flex flex-col">
-        <span className={`font-display ${textColor} leading-none text-base font-bold tracking-tight`}>MUTUA</span>
-        <span className={`font-display ${textColor} leading-none text-[10px] font-medium tracking-widest opacity-80`}>MADRILEÑA</span>
-      </div>
     </div>
   )
 }
