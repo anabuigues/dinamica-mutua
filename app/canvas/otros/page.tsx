@@ -88,8 +88,8 @@ export default function OtrosCanvasPage() {
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/canvas" className="text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors">
-              ← Mi canvas
+            <Link href="/modelo" className="text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors">
+              ← Volver al modelo
             </Link>
             <button
               onClick={() => { cerrarSesion(); router.push('/') }}

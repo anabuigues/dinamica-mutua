@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { obtenerSesion, cerrarSesion } from '@/lib/session'
-import { exportarCanvasPDF } from '@/lib/exportar'
+
 import type { SesionUsuario, TraspasoItem } from '@/types'
 
 // ─── Tipos locales ────────────────────────────────────────────────────────────
@@ -215,7 +215,6 @@ function CanvasPageContent() {
   })
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
   const [loading, setLoading] = useState(true)
-  const [exporting, setExporting] = useState(false)
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const searchParams = useSearchParams()
   const areaId = searchParams.get('area')
@@ -348,23 +347,6 @@ function CanvasPageContent() {
     }))
   }
 
-  // ── Exportar PDF ────────────────────────────────────────────────────────────
-  async function handleExportPDF() {
-    if (!sesion) return
-    setExporting(true)
-    await exportarCanvasPDF({
-      nombre: sesion.nombre,
-      updated_at: updatedAt ?? new Date().toISOString(),
-      mision: canvas.mision,
-      retos_talento: canvas.retos_talento,
-      retos_procesos: canvas.retos_procesos,
-      retos_cultura: canvas.retos_cultura,
-      retos_otros: canvas.retos_otros,
-      traspasar: canvas.traspasar,
-      recibir: canvas.recibir,
-    })
-    setExporting(false)
-  }
 
   // ── Loading / sin sesión ───────────────────────────────────────────────────
   if (loading) {
