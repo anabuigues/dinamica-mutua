@@ -232,7 +232,7 @@ function CanvasPageContent() {
       const { data, error } = await supabase
         .from('canvas')
         .select('*')
-        .eq('usuario_id', s.id)
+        .eq('usuario_id', s!.id)
         .eq('area_id', areaId)
         .maybeSingle()
 
