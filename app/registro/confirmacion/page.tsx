@@ -208,9 +208,9 @@ function ConfirmacionContent() {
           fullWidth
           size="lg"
           id="btn-ir-a-canvas"
-          onClick={() => router.push('/canvas')}
+          onClick={() => router.push('/modelo')}
         >
-          Ir a mi canvas →
+          Ir al modelo organizativo →
         </Button>
 
         <p className="text-center text-xs text-neutral-400 font-body mt-4">

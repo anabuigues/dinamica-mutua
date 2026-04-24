@@ -11,7 +11,7 @@ export default function HomePage() {
   useEffect(() => {
     // HU-02: Si hay sesión activa, redirigir directamente al canvas
     if (tieneSesionActiva()) {
-      router.replace('/canvas')
+      router.replace('/modelo')
     }
   }, [router])
 
