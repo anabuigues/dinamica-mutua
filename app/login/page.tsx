@@ -25,7 +25,7 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (tieneSesionActiva()) {
-      router.replace('/canvas')
+      router.replace('/modelo')
     }
   }, [router])
 
@@ -94,7 +94,7 @@ export default function LoginPage() {
       })
 
       // Redirigir según rol
-      router.push(u.rol === 'superusuario' ? '/admin' : '/canvas')
+      router.push(u.rol === 'superusuario' ? '/admin' : '/modelo')
     } catch (err) {
       console.error('Error en login:', err)
       setErrors({ general: 'Error inesperado. Inténtalo de nuevo.' })
