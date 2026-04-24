@@ -227,23 +227,13 @@ function CanvasPageContent() {
     setSesion(s)
 
     async function cargarCanvas() {
-      const { data: userData } = await supabase
-        .from('usuarios')
-        .select('id')
-        .eq('identificador', s!.identificador)
-        .single()
-
-      if (!userData) {
-        setLoading(false)
-        return
-      }
-
+      // Usamos sesion.id directamente ya que lo tenemos en la sesión
       const { data, error } = await supabase
         .from('canvas')
         .select('*')
-        .eq('usuario_id', userData.id)
+        .eq('usuario_id', s.id)
         .eq('area_id', areaId)
-        .single()
+        .maybeSingle()
 
       if (!error && data) {
         setCanvasId(data.id)
@@ -274,23 +264,10 @@ function CanvasPageContent() {
     setSaveStatus('saving')
     const now = new Date().toISOString()
     
-    // Necesitamos el usuario_id real
-    const { data: userData } = await supabase
-      .from('usuarios')
-      .select('id')
-      .eq('identificador', sesion.identificador)
-      .single()
-      
-    if (!userData) {
-      setSaveStatus('error')
-      return
-    }
-
     const { data: upsertData, error } = await supabase
       .from('canvas')
       .upsert({
-        ...(cId ? { id: cId } : {}),
-        usuario_id: userData.id,
+        usuario_id: sesion.id,
         area_id: areaId,
         mision: data.mision,
         retos_talento: data.retos_talento,
@@ -386,12 +363,7 @@ function CanvasPageContent() {
             </Link>
             <SaveIndicator status={saveStatus} />
 
-            <Link
-              href="/canvas/otros"
-              className="hidden sm:block text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors"
-            >
-              Equipo
-            </Link>
+
             <div className="hidden sm:flex items-center gap-2">
               <div className="w-7 h-7 rounded-full bg-brand-blue-dark/10 flex items-center justify-center">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="#003087">

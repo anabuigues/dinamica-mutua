@@ -64,6 +64,7 @@ export default function RegistroPage() {
         id: identificador,
         pwd: passwordPlano,
         nombre: nombre.trim(),
+        uid: data.id, // Pasamos el UUID real
       })
       router.push(`/registro/confirmacion?${params.toString()}`)
     } catch (err) {

@@ -106,11 +106,12 @@ function ConfirmacionContent() {
   const [sessionSaved, setSessionSaved] = useState(false)
 
   const saveSession = useCallback(() => {
-    if (identificador && nombre && !sessionSaved) {
-      guardarSesion({ id: '', nombre, identificador, rol: 'participante' })
+    const uid = searchParams.get('uid') || ''
+    if (identificador && nombre && uid && !sessionSaved) {
+      guardarSesion({ id: uid, nombre, identificador, rol: 'participante' })
       setSessionSaved(true)
     }
-  }, [identificador, nombre, sessionSaved])
+  }, [identificador, nombre, sessionSaved, searchParams])
 
   useEffect(() => {
     if (!identificador || !password) {
