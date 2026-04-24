@@ -309,7 +309,6 @@ export default function CanvasPage() {
     setExporting(true)
     await exportarCanvasPDF({
       nombre: sesion.nombre,
-      area: sesion.area,
       updated_at: updatedAt ?? new Date().toISOString(),
       mision: canvas.mision,
       retos_talento: canvas.retos_talento,
@@ -384,7 +383,6 @@ export default function CanvasPage() {
               </div>
               <div>
                 <p className="text-xs font-semibold text-neutral-800 font-body leading-none">{sesion.nombre}</p>
-                <p className="text-xs text-neutral-500 font-body">{sesion.area}</p>
               </div>
             </div>
             <button
@@ -416,14 +414,10 @@ export default function CanvasPage() {
               </p>
             </div>
           </div>
-          <div className="px-6 py-4 grid grid-cols-2 gap-4">
+          <div className="px-6 py-4">
             <div>
               <p className="text-xs text-neutral-500 font-body uppercase tracking-wider mb-1">Nombre</p>
               <p className="text-sm font-semibold text-neutral-800 font-body">{sesion.nombre}</p>
-            </div>
-            <div>
-              <p className="text-xs text-neutral-500 font-body uppercase tracking-wider mb-1">Área</p>
-              <p className="text-sm font-semibold text-neutral-800 font-body">{sesion.area}</p>
             </div>
           </div>
         </div>
