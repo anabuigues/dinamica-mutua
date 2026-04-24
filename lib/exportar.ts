@@ -3,7 +3,6 @@ import type { TraspasoItem } from '@/types'
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 export interface CanvasExport {
   nombre: string
-  area: string
   updated_at: string
   mision: string
   retos_talento: string
@@ -57,7 +56,7 @@ export async function exportarCanvasPDF(canvas: CanvasExport) {
 
   doc.setFontSize(8)
   doc.setFont('helvetica', 'normal')
-  doc.text(`${canvas.nombre}  ·  ${canvas.area}`, margin, 29)
+  doc.text(`${canvas.nombre}`, margin, 29)
   doc.text(formatDate(canvas.updated_at), pageW - margin, 29, { align: 'right' })
 
   y = 44
@@ -222,10 +221,10 @@ export async function exportarDashboardPDF(
   autoTable(doc, {
     startY: 39,
     margin: { left: margin, right: margin },
-    head: [['Área', 'Nombre', 'Misión', 'Fecha']],
+    head: [['Nombre', 'Misión', 'Fecha']],
     body: canvases
       .filter((c) => c.mision.trim())
-      .map((c) => [c.area, c.nombre, c.mision, formatDate(c.updated_at)]),
+      .map((c) => [c.nombre, c.mision, formatDate(c.updated_at)]),
     headStyles: { fillColor: BRAND_BLUE, textColor: WHITE, fontSize: 8, fontStyle: 'bold' },
     bodyStyles: { fontSize: 8, textColor: TEXT_DARK },
     alternateRowStyles: { fillColor: LIGHT_GRAY },
@@ -242,16 +241,16 @@ export async function exportarDashboardPDF(
 
   const retosRows: string[][] = []
   canvases.forEach((c) => {
-    if (c.retos_talento.trim()) retosRows.push([c.area, c.nombre, 'Talento', c.retos_talento])
-    if (c.retos_procesos.trim()) retosRows.push([c.area, c.nombre, 'Procesos', c.retos_procesos])
-    if (c.retos_cultura.trim()) retosRows.push([c.area, c.nombre, 'Cultura', c.retos_cultura])
-    if (c.retos_otros.trim()) retosRows.push([c.area, c.nombre, 'Otros', c.retos_otros])
+    if (c.retos_talento.trim()) retosRows.push([c.nombre, 'Talento', c.retos_talento])
+    if (c.retos_procesos.trim()) retosRows.push([c.nombre, 'Procesos', c.retos_procesos])
+    if (c.retos_cultura.trim()) retosRows.push([c.nombre, 'Cultura', c.retos_cultura])
+    if (c.retos_otros.trim()) retosRows.push([c.nombre, 'Otros', c.retos_otros])
   })
 
   autoTable(doc, {
     startY: lastY1 + 3,
     margin: { left: margin, right: margin },
-    head: [['Área', 'Nombre', 'Categoría', 'Reto']],
+    head: [['Nombre', 'Categoría', 'Reto']],
     body: retosRows,
     headStyles: { fillColor: BRAND_BLUE, textColor: WHITE, fontSize: 8, fontStyle: 'bold' },
     bodyStyles: { fontSize: 8, textColor: TEXT_DARK },
@@ -273,10 +272,10 @@ export async function exportarDashboardPDF(
   const recRows: string[][] = []
   canvases.forEach((c) => {
     c.traspasar.filter((t) => t.texto.trim()).forEach((t) =>
-      trRows.push([c.area, c.nombre, t.texto])
+      trRows.push([c.nombre, t.texto])
     )
     c.recibir.filter((r) => r.texto.trim()).forEach((r) =>
-      recRows.push([c.area, c.nombre, r.texto])
+      recRows.push([c.nombre, r.texto])
     )
   })
 
@@ -288,8 +287,8 @@ export async function exportarDashboardPDF(
   autoTable(doc, {
     startY: 29,
     margin: { left: margin, right: margin },
-    head: [['Área', 'Nombre', 'Elemento a traspasar']],
-    body: trRows.length ? trRows : [['—', '—', 'Sin entradas']],
+    head: [['Nombre', 'Elemento a traspasar']],
+    body: trRows.length ? trRows : [['—', 'Sin entradas']],
     headStyles: { fillColor: BRAND_BLUE, textColor: WHITE, fontSize: 8, fontStyle: 'bold' },
     bodyStyles: { fontSize: 8, textColor: TEXT_DARK },
     alternateRowStyles: { fillColor: LIGHT_GRAY },
@@ -305,8 +304,8 @@ export async function exportarDashboardPDF(
   autoTable(doc, {
     startY: lastY2 + 3,
     margin: { left: margin, right: margin },
-    head: [['Área', 'Nombre', 'Elemento a recibir']],
-    body: recRows.length ? recRows : [['—', '—', 'Sin entradas']],
+    head: [['Nombre', 'Elemento a recibir']],
+    body: recRows.length ? recRows : [['—', 'Sin entradas']],
     headStyles: { fillColor: BRAND_PINK, textColor: WHITE, fontSize: 8, fontStyle: 'bold' },
     bodyStyles: { fontSize: 8, textColor: TEXT_DARK },
     alternateRowStyles: { fillColor: [255, 240, 248] as [number, number, number] },
@@ -342,7 +341,6 @@ export async function exportarDashboardExcel(
   // ── Hoja 1: Resumen ────────────────────────────────────────────────────────
   const resumenData = canvases.map((c) => ({
     'Nombre': c.nombre,
-    'Área': c.area,
     'Misión': c.mision,
     'Retos — Talento': c.retos_talento,
     'Retos — Procesos': c.retos_procesos,
@@ -356,7 +354,7 @@ export async function exportarDashboardExcel(
 
   const wsResumen = XLSX.utils.json_to_sheet(resumenData)
   wsResumen['!cols'] = [
-    { wch: 22 }, { wch: 18 }, { wch: 45 }, { wch: 35 }, { wch: 35 },
+    { wch: 22 }, { wch: 45 }, { wch: 35 }, { wch: 35 },
     { wch: 35 }, { wch: 35 }, { wch: 40 }, { wch: 40 }, { wch: 16 }, { wch: 14 },
   ]
   XLSX.utils.book_append_sheet(wb, wsResumen, 'Resumen')
@@ -372,28 +370,28 @@ export async function exportarDashboardExcel(
     ]
     categorias.forEach(([cat, val]) => {
       if (val.trim()) {
-        retosData.push({ 'Área': c.area, 'Nombre': c.nombre, 'Categoría': cat, 'Reto': val })
+        retosData.push({ 'Nombre': c.nombre, 'Categoría': cat, 'Reto': val })
       }
     })
   })
 
   const wsRetos = XLSX.utils.json_to_sheet(retosData)
-  wsRetos['!cols'] = [{ wch: 18 }, { wch: 22 }, { wch: 12 }, { wch: 60 }]
+  wsRetos['!cols'] = [{ wch: 22 }, { wch: 12 }, { wch: 60 }]
   XLSX.utils.book_append_sheet(wb, wsRetos, 'Retos')
 
   // ── Hoja 3: Traspasar / Recibir ────────────────────────────────────────────
   const trData: Record<string, string>[] = []
   canvases.forEach((c) => {
     c.traspasar.filter((t) => t.texto.trim()).forEach((t) =>
-      trData.push({ 'Tipo': 'Traspasar', 'Área': c.area, 'Nombre': c.nombre, 'Elemento': t.texto })
+      trData.push({ 'Tipo': 'Traspasar', 'Nombre': c.nombre, 'Elemento': t.texto })
     )
     c.recibir.filter((r) => r.texto.trim()).forEach((r) =>
-      trData.push({ 'Tipo': 'Recibir', 'Área': c.area, 'Nombre': c.nombre, 'Elemento': r.texto })
+      trData.push({ 'Tipo': 'Recibir', 'Nombre': c.nombre, 'Elemento': r.texto })
     )
   })
 
   const wsTr = XLSX.utils.json_to_sheet(trData)
-  wsTr['!cols'] = [{ wch: 12 }, { wch: 18 }, { wch: 22 }, { wch: 55 }]
+  wsTr['!cols'] = [{ wch: 12 }, { wch: 22 }, { wch: 55 }]
   XLSX.utils.book_append_sheet(wb, wsTr, 'Traspasar-Recibir')
 
   const nombreArchivo = `dashboard_dinamica-mutua${filtroArea ? `_${filtroArea}` : ''}_${new Date().toISOString().slice(0, 10)}.xlsx`

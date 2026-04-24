@@ -12,7 +12,6 @@ interface ParticipanteCanvas {
   usuario_id: string
   updated_at: string
   nombre: string
-  area: string
   identificador: string
   mision: string
 }
@@ -21,7 +20,6 @@ export default function OtrosCanvasPage() {
   const router = useRouter()
   const [sesion, setSesion] = useState<SesionUsuario | null>(null)
   const [participantes, setParticipantes] = useState<ParticipanteCanvas[]>([])
-  const [filtroArea, setFiltroArea] = useState('')
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -42,7 +40,6 @@ export default function OtrosCanvasPage() {
         mision,
         usuarios (
           nombre,
-          area,
           identificador
         )
       `)
@@ -57,7 +54,6 @@ export default function OtrosCanvasPage() {
           updated_at: c.updated_at,
           mision: c.mision ?? '',
           nombre: c.usuarios.nombre,
-          area: c.usuarios.area,
           identificador: c.usuarios.identificador,
         }))
       setParticipantes(lista)
@@ -65,10 +61,7 @@ export default function OtrosCanvasPage() {
     setLoading(false)
   }
 
-  const areas = Array.from(new Set(participantes.map((p) => p.area))).sort()
-  const filtrados = filtroArea
-    ? participantes.filter((p) => p.area === filtroArea)
-    : participantes
+  const filtrados = participantes
 
   function formatDate(iso: string) {
     if (!iso) return '—'
@@ -116,29 +109,6 @@ export default function OtrosCanvasPage() {
           </p>
         </div>
 
-        {/* Filtro por área */}
-        <div className="bg-white rounded-xl border border-neutral-200 shadow-sm px-5 py-4 mb-6 flex flex-wrap items-center gap-2">
-          <span className="text-xs text-neutral-500 font-body uppercase tracking-wider mr-1">Área:</span>
-          <button
-            onClick={() => setFiltroArea('')}
-            className={`px-3 py-1.5 rounded-full text-xs font-body transition-colors ${
-              filtroArea === '' ? 'bg-brand-blue-dark text-white' : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-            }`}
-          >
-            Todos ({participantes.length})
-          </button>
-          {areas.map((area) => (
-            <button
-              key={area}
-              onClick={() => setFiltroArea(area === filtroArea ? '' : area)}
-              className={`px-3 py-1.5 rounded-full text-xs font-body transition-colors ${
-                filtroArea === area ? 'bg-brand-blue-dark text-white' : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-              }`}
-            >
-              {area}
-            </button>
-          ))}
-        </div>
 
         {/* Grid de tarjetas */}
         {loading ? (
@@ -159,14 +129,13 @@ export default function OtrosCanvasPage() {
               return (
                 <Link
                   key={p.id}
-                  href={esPropio ? '/canvas' : `/canvas/${p.id}`}
+                  href={esPropio ? '/canvas' : `/canvas/ver?id=${p.id}`}
                   className="group block bg-white rounded-xl border border-neutral-200 hover:border-brand-blue-mid hover:shadow-md transition-all overflow-hidden"
                 >
                   <div className={`px-4 py-3 ${esPropio ? 'bg-brand-pink' : 'bg-brand-blue-dark'}`}>
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-white font-display uppercase text-sm leading-tight">{p.nombre}</p>
-                        <p className="text-white/70 text-xs font-body">{p.area}</p>
                       </div>
                       {esPropio && (
                         <span className="bg-white/20 text-white text-xs font-body px-2 py-0.5 rounded-full">Tú</span>

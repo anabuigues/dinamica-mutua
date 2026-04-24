@@ -1,8 +1,10 @@
 /** @type {import('next').NextConfig} */
+const isProd = process.env.NODE_ENV === 'production'
+
 const nextConfig = {
   output: 'export',
   images: { unoptimized: true },
-  // basePath: '/dinamica-mutua',
+  ...(isProd ? { basePath: '/dinamica-mutua', assetPrefix: '/dinamica-mutua' } : {}),
 }
 
 module.exports = nextConfig

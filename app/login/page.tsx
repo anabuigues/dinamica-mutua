@@ -67,7 +67,7 @@ export default function LoginPage() {
       // Buscar usuario por identificador
       const { data: usuario, error } = await supabase
         .from('usuarios')
-        .select('id, nombre, area, identificador, password_hash, rol')
+        .select('id, nombre, identificador, password_hash, rol')
         .eq('identificador', identificador.trim().toUpperCase())
         .single()
 
@@ -89,7 +89,6 @@ export default function LoginPage() {
       guardarSesion({
         id: u.id,
         nombre: u.nombre,
-        area: u.area,
         identificador: u.identificador,
         rol: u.rol,
       })

@@ -1,7 +1,8 @@
 'use client'
 
+import * as React from 'react'
 import { useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { obtenerSesion, cerrarSesion } from '@/lib/session'
@@ -10,7 +11,6 @@ import type { SesionUsuario, TraspasoItem } from '@/types'
 interface CanvasCompleto {
   id: string
   nombre: string
-  area: string
   identificador: string
   updated_at: string
   mision: string
@@ -85,10 +85,10 @@ function ReadList({
 }
 
 // ─── Página ───────────────────────────────────────────────────────────────────
-export default function CanvasAjenoPage() {
-  const params = useParams()
+function CanvasAjenoContent() {
+  const searchParams = useSearchParams()
   const router = useRouter()
-  const canvasId = params.id as string
+  const canvasId = searchParams.get('id')
 
   const [sesion, setSesion] = useState<SesionUsuario | null>(null)
   const [canvas, setCanvas] = useState<CanvasCompleto | null>(null)
@@ -118,7 +118,6 @@ export default function CanvasAjenoPage() {
         recibir,
         usuarios (
           nombre,
-          area,
           identificador
         )
       `)
@@ -137,7 +136,6 @@ export default function CanvasAjenoPage() {
     setCanvas({
       id: data.id,
       nombre: u?.nombre ?? '—',
-      area: u?.area ?? '—',
       identificador: u?.identificador ?? '—',
       updated_at: data.updated_at ?? '',
       mision: (data as any).mision ?? '',
@@ -234,14 +232,10 @@ export default function CanvasAjenoPage() {
               <p className="text-white/90 text-xs font-body">{formatDate(canvas.updated_at)}</p>
             </div>
           </div>
-          <div className="px-6 py-4 grid grid-cols-2 gap-4">
+          <div className="px-6 py-4">
             <div>
               <p className="text-xs text-neutral-500 font-body uppercase tracking-wider mb-1">Nombre</p>
               <p className="text-sm font-semibold text-neutral-800 font-body">{canvas.nombre}</p>
-            </div>
-            <div>
-              <p className="text-xs text-neutral-500 font-body uppercase tracking-wider mb-1">Área</p>
-              <p className="text-sm font-semibold text-neutral-800 font-body">{canvas.area}</p>
             </div>
           </div>
         </div>
@@ -295,5 +289,20 @@ export default function CanvasAjenoPage() {
         </p>
       </div>
     </main>
+  )
+}
+
+export default function CanvasAjenoPage() {
+  return (
+    <React.Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+        <svg className="animate-spin w-8 h-8 text-brand-blue-mid" viewBox="0 0 24 24" fill="none">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+        </svg>
+      </div>
+    }>
+      <CanvasAjenoContent />
+    </React.Suspense>
   )
 }
