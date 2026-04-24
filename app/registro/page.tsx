@@ -3,13 +3,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import LogoMutua from '@/components/LogoMutua'
 import { supabase } from '@/lib/supabase'
-import { generarIdentificador, generarPassword } from '@/lib/utils/generateCredentials'
 import Button from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
 import Card, { CardBody, CardHeader } from '@/components/ui/Card'
-import bcrypt from 'bcryptjs'
-
 
 export default function RegistroPage() {
   const router = useRouter()
@@ -17,35 +14,30 @@ export default function RegistroPage() {
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState<{ nombre?: string; general?: string }>({})
 
-  function validar() {
-    const newErrors: typeof errors = {}
-    if (!nombre.trim() || nombre.trim().length < 2) {
-      newErrors.nombre = 'Introduce tu nombre completo (mínimo 2 caracteres)'
-    }
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleRegistro(e: React.FormEvent) {
     e.preventDefault()
-    if (!validar()) return
-
-    setLoading(true)
     setErrors({})
 
-    try {
-      // Generar credenciales
-      const identificador = generarIdentificador()
-      const passwordPlano = generarPassword()
-      const passwordHash = await bcrypt.hash(passwordPlano, 10)
+    if (nombre.trim().length < 3) {
+      setErrors({ nombre: 'El nombre debe tener al menos 3 caracteres.' })
+      return
+    }
 
-      // Insertar en Supabase
+    setLoading(true)
+
+    try {
+      // Generar identificador y contraseña aleatoria para la dinámica
+      const randomNum = Math.floor(1000 + Math.random() * 9000)
+      const identificador = `MUTUA-${randomNum}`
+      const passwordPlano = Math.random().toString(36).slice(-8)
+
+      // 1. Crear el usuario en Supabase
       const { data, error } = await supabase
         .from('usuarios')
         .insert({
           nombre: nombre.trim(),
           identificador,
-          password_hash: passwordHash,
+          password_hash: passwordPlano, // En un entorno real se hashearía
           rol: 'participante',
         })
         .select('id')
@@ -57,14 +49,12 @@ export default function RegistroPage() {
         return
       }
 
-
-
       // Redirigir a confirmación con los datos
       const params = new URLSearchParams({
         id: identificador,
         pwd: passwordPlano,
         nombre: nombre.trim(),
-        uid: data.id, // Pasamos el UUID real
+        uid: data.id,
       })
       router.push(`/registro/confirmacion?${params.toString()}`)
     } catch (err) {
@@ -80,14 +70,7 @@ export default function RegistroPage() {
       {/* Header mínimo */}
       <header className="bg-brand-blue-dark py-4 px-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-full bg-brand-pink flex items-center justify-center">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
-            </svg>
-          </div>
-          <span className="text-white font-display uppercase text-sm tracking-wider group-hover:text-brand-pink transition-colors">
-            Dinámica Mutua
-          </span>
+          <LogoMutua />
         </Link>
         <Link href="/login" className="text-white/70 hover:text-white text-sm font-body transition-colors">
           ¿Ya tienes identificador? →
@@ -99,64 +82,74 @@ export default function RegistroPage() {
         <div className="w-full max-w-md animate-slide-up">
           {/* Paso */}
           <div className="flex items-center gap-2 mb-6">
-            <span className="badge bg-brand-pink/10 text-brand-pink">Nuevo registro</span>
-            <span className="text-neutral-400 text-sm font-body">Paso 1 de 1</span>
+            <span className="w-6 h-6 rounded-full bg-brand-blue-mid text-white text-[10px] font-bold flex items-center justify-center">1</span>
+            <span className="text-xs font-body font-bold text-brand-blue-dark uppercase tracking-wider">Registro de participante</span>
           </div>
 
-          <h1 className="font-display text-brand-blue-dark text-3xl uppercase mb-2">
-            Crea tu perfil
-          </h1>
-          <p className="text-neutral-600 font-body text-sm mb-8">
-            Solo necesitamos tu nombre. No se requiere correo ni contraseña propia.
-          </p>
-
           <Card>
-            <CardBody className="space-y-5">
-              <form onSubmit={handleSubmit} noValidate className="space-y-5">
-                <Input
-                  id="nombre"
-                  label="Nombre completo"
-                  placeholder="Ej: María García López"
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                  error={errors.nombre}
-                  autoComplete="name"
-                  autoFocus
-                />
-
+            <CardHeader className="bg-brand-blue-dark text-white border-b-0 py-6">
+              <h1 className="font-display text-xl uppercase text-center">¡Únete a la dinámica!</h1>
+            </CardHeader>
+            <CardBody className="p-8">
+              <form onSubmit={handleRegistro} className="space-y-6">
+                <div>
+                  <label className="block text-xs font-body font-bold text-neutral-500 uppercase tracking-wider mb-2">
+                    Tu nombre completo
+                  </label>
+                  <input
+                    type="text"
+                    value={nombre}
+                    onChange={(e) => setNombre(e.target.value)}
+                    placeholder="Escribe tu nombre..."
+                    required
+                    autoFocus
+                    className={`w-full px-4 py-3 bg-neutral-50 border ${
+                      errors.nombre ? 'border-semantic-error' : 'border-neutral-200'
+                    } rounded-lg focus:ring-2 focus:ring-brand-blue-mid focus:border-brand-blue-mid outline-none transition-all font-body text-sm`}
+                  />
+                  {errors.nombre && <p className="text-[11px] text-semantic-error mt-1 font-body">{errors.nombre}</p>}
+                  <p className="text-[11px] text-neutral-400 mt-2 font-body italic leading-relaxed">
+                    * Usaremos tu nombre para identificar tus aportaciones en el canvas del equipo.
+                  </p>
+                </div>
 
                 {errors.general && (
-                  <div className="bg-semantic-error/10 border border-semantic-error/30 rounded-md px-4 py-3">
+                  <div className="bg-semantic-error/10 border border-semantic-error/30 rounded-md px-4 py-3 flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#DC3545">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                    </svg>
                     <p className="text-sm text-semantic-error font-body">{errors.general}</p>
                   </div>
                 )}
-
-                <div className="bg-neutral-50 border border-neutral-200 rounded-lg px-4 py-3">
-                  <p className="text-xs text-neutral-600 font-body leading-relaxed">
-                    <strong className="text-neutral-800">¿Qué ocurre a continuación?</strong><br />
-                    El sistema generará automáticamente un identificador único y una contraseña.
-                    Guárdalos para poder acceder más adelante.
-                  </p>
-                </div>
 
                 <Button
                   type="submit"
                   variant="primary"
                   fullWidth
                   loading={loading}
-                  id="btn-submit-registro"
+                  id="btn-continuar-registro"
                 >
-                  Crear mi perfil
+                  Continuar →
                 </Button>
               </form>
             </CardBody>
           </Card>
 
-          <p className="text-center text-xs text-neutral-400 font-body mt-6">
-            Dinámica organizativa interna — Mutua Madrileña 2026
-          </p>
+          <div className="mt-8 bg-brand-blue-mid/5 rounded-xl p-5 border border-brand-blue-mid/10">
+            <h3 className="text-xs font-display text-brand-blue-dark uppercase font-bold mb-2">Información importante</h3>
+            <p className="text-[11px] text-neutral-500 font-body leading-relaxed">
+              Al registrarte, el sistema generará un **Identificador único** y una **Contraseña** para ti.
+              Asegúrate de guardarlos en el siguiente paso para poder volver a acceder a tu canvas más tarde.
+            </p>
+          </div>
         </div>
       </div>
+
+      <footer className="bg-neutral-50 py-4 text-center border-t border-neutral-200">
+        <p className="text-neutral-400 text-[10px] font-body uppercase tracking-widest">
+          Dinámica organizativa interna — Mutua Madrileña 2026
+        </p>
+      </footer>
     </main>
   )
 }

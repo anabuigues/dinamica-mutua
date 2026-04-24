@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { obtenerSesion, cerrarSesion } from '@/lib/session'
+import LogoMutua from '@/components/LogoMutua'
 import type { SesionUsuario } from '@/types'
 
 function Cell({
@@ -101,16 +102,7 @@ export default function ModeloOrganizativoPage() {
       {/* Navbar */}
       <header className="bg-white border-b border-neutral-200 shadow-sm sticky top-0 z-10">
         <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-brand-pink flex items-center justify-center">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z" />
-              </svg>
-            </div>
-            <span className="font-display text-brand-blue-dark uppercase text-sm tracking-wider">
-              Dinámica Mutua
-            </span>
-          </div>
+          <LogoMutua />
           <div className="flex items-center gap-4">
 
             <button

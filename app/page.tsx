@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { tieneSesionActiva } from '@/lib/session'
+import LogoMutua from '@/components/LogoMutua'
 
 export default function HomePage() {
   const router = useRouter()
@@ -20,14 +21,8 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="hero-section flex-1 flex flex-col items-center justify-center">
         <div className="max-w-2xl mx-auto animate-slide-up">
-          {/* Logo / Brand */}
-          <div className="flex items-center justify-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-full bg-brand-pink flex items-center justify-center shadow-lg">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
-              </svg>
-            </div>
-            <span className="text-white/70 text-sm font-body tracking-widest uppercase">Mutua Madrileña</span>
+          <div className="flex items-center justify-center mb-8">
+            <LogoMutua className="scale-125" variant="light" />
           </div>
 
           {/* Heading */}

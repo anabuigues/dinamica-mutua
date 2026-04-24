@@ -3,25 +3,20 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import LogoMutua from '@/components/LogoMutua'
 import { supabase } from '@/lib/supabase'
 import { guardarSesion, tieneSesionActiva } from '@/lib/session'
 import Button from '@/components/ui/Button'
-import { Input } from '@/components/ui/Input'
 import Card, { CardBody, CardHeader } from '@/components/ui/Card'
 import bcrypt from 'bcryptjs'
-import type { Usuario } from '@/types'
 
 export default function LoginPage() {
   const router = useRouter()
   const [identificador, setIdentificador] = useState('')
   const [password, setPassword] = useState('')
-  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState<{
-    identificador?: string
-    password?: string
-    general?: string
-  }>({})
+  const [showPassword, setShowPassword] = useState(false)
+  const [errors, setErrors] = useState<{ general?: string }>({})
 
   useEffect(() => {
     if (tieneSesionActiva()) {
@@ -29,54 +24,23 @@ export default function LoginPage() {
     }
   }, [router])
 
-  // Formatear identificador automáticamente con guión
-  function handleIdentificadorChange(value: string) {
-    // Eliminar caracteres no válidos y forzar mayúsculas
-    let clean = value.toUpperCase().replace(/[^A-Z0-9-]/g, '')
-    // Insertar guión automáticamente después del 4º carácter
-    if (clean.length > 4 && !clean.includes('-')) {
-      clean = clean.slice(0, 4) + '-' + clean.slice(4)
-    }
-    // Limitar a 9 chars (XXXX-XXXX)
-    if (clean.length > 9) clean = clean.slice(0, 9)
-    setIdentificador(clean)
-  }
-
-  function validar() {
-    const newErrors: typeof errors = {}
-    if (!identificador.trim()) {
-      newErrors.identificador = 'Introduce tu identificador'
-    } else if (identificador.replace('-', '').length < 8) {
-      newErrors.identificador = 'El identificador tiene 8 caracteres (ej. A3K9-PZ2M)'
-    }
-    if (!password) {
-      newErrors.password = 'Introduce tu contraseña'
-    }
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
-    if (!validar()) return
-
-    setLoading(true)
     setErrors({})
+    setLoading(true)
 
     try {
       // Buscar usuario por identificador
-      const { data: usuario, error } = await supabase
+      const { data: u, error } = await supabase
         .from('usuarios')
-        .select('id, nombre, identificador, password_hash, rol')
+        .select('*')
         .eq('identificador', identificador.trim().toUpperCase())
         .single()
 
-      if (error || !usuario) {
+      if (error || !u) {
         setErrors({ general: 'Identificador o contraseña incorrectos.' })
         return
       }
-
-      const u = usuario as Usuario
 
       // Verificar contraseña
       const passwordValida = await bcrypt.compare(password, u.password_hash)
@@ -108,80 +72,52 @@ export default function LoginPage() {
       {/* Header */}
       <header className="bg-brand-blue-dark py-4 px-6 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 rounded-full bg-brand-pink flex items-center justify-center">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
-            </svg>
-          </div>
-          <span className="text-white font-display uppercase text-sm tracking-wider group-hover:text-brand-pink transition-colors">
-            Dinámica Mutua
-          </span>
+          <LogoMutua />
         </Link>
         <Link href="/registro" className="text-white/70 hover:text-white text-sm font-body transition-colors">
           ¿Primera vez? Regístrate →
         </Link>
       </header>
 
+      {/* Contenido */}
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md animate-slide-up">
-          <div className="flex items-center gap-2 mb-6">
-            <span className="badge bg-brand-blue-dark/10 text-brand-blue-dark">Acceso</span>
-          </div>
-
-          <h1 className="font-display text-brand-blue-dark text-3xl uppercase mb-2">
-            Bienvenido de nuevo
-          </h1>
-          <p className="text-neutral-600 font-body text-sm mb-8">
-            Introduce tu identificador y contraseña para retomar tu canvas.
-          </p>
-
           <Card>
-            <CardHeader blue>
-              <div className="flex items-center gap-2">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
-                  <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
-                </svg>
-                <h2 className="font-display text-white text-sm uppercase tracking-wider">
-                  Introduce tus credenciales
-                </h2>
-              </div>
+            <CardHeader className="bg-brand-blue-dark text-white border-b-0 py-6">
+              <h1 className="font-display text-xl uppercase text-center">Acceso al Canvas</h1>
             </CardHeader>
-
-            <CardBody className="space-y-5">
-              <form onSubmit={handleSubmit} noValidate className="space-y-5">
+            <CardBody className="p-8">
+              <form onSubmit={handleLogin} className="space-y-6">
                 <div>
-                  <Input
-                    id="identificador"
-                    label="Identificador"
-                    placeholder="Ej: A3K9-PZ2M"
+                  <label className="block text-xs font-body font-bold text-neutral-500 uppercase tracking-wider mb-2">
+                    Identificador Mutua
+                  </label>
+                  <input
+                    type="text"
                     value={identificador}
-                    onChange={(e) => handleIdentificadorChange(e.target.value)}
-                    error={errors.identificador}
-                    autoComplete="username"
-                    autoFocus
-                    maxLength={9}
-                    className="font-mono tracking-widest text-lg uppercase"
-                    hint="8 caracteres con guión en el medio (ej. A3K9-PZ2M)"
+                    onChange={(e) => setIdentificador(e.target.value)}
+                    placeholder="Ej: MUTUA-1234"
+                    required
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-brand-blue-mid focus:border-brand-blue-mid outline-none transition-all font-body text-sm"
                   />
                 </div>
 
                 <div className="relative">
-                  <Input
-                    id="password"
-                    label="Contraseña"
+                  <label className="block text-xs font-body font-bold text-neutral-500 uppercase tracking-wider mb-2">
+                    Tu contraseña
+                  </label>
+                  <input
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Ej: cielo-84-mapa"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    error={errors.password}
-                    autoComplete="current-password"
+                    placeholder="••••••••"
+                    required
+                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-lg focus:ring-2 focus:ring-brand-blue-mid focus:border-brand-blue-mid outline-none transition-all font-body text-sm pr-12"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-8 text-neutral-400 hover:text-neutral-600 transition-colors"
-                    tabIndex={-1}
-                    aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    className="absolute right-3 top-[38px] text-neutral-400 hover:text-brand-blue-mid transition-colors"
                   >
                     {showPassword ? (
                       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -225,6 +161,12 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
+
+      <footer className="bg-neutral-50 py-4 text-center border-t border-neutral-200">
+        <p className="text-neutral-400 text-[10px] font-body uppercase tracking-widest">
+          Dinámica organizativa interna — Mutua Madrileña 2026
+        </p>
+      </footer>
     </main>
   )
 }
