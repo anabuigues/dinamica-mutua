@@ -26,9 +26,11 @@ export default function RegistroPage() {
     setLoading(true)
 
     try {
-      // Generar identificador y contraseña aleatoria para la dinámica
-      const randomNum = Math.floor(1000 + Math.random() * 9000)
-      const identificador = `MUTUA-${randomNum}`
+      // Generar identificador de exactamente 9 caracteres para cumplir con char(9)
+      // Formato: M-XXXX-XX (Ej: M-1234-56)
+      const part1 = Math.floor(1000 + Math.random() * 9000)
+      const part2 = Math.floor(10 + Math.random() * 90)
+      const identificador = `M-${part1}-${part2}`
       const passwordPlano = Math.random().toString(36).slice(-8)
 
       // 1. Crear el usuario en Supabase
@@ -45,7 +47,7 @@ export default function RegistroPage() {
 
       if (error) {
         console.error('Error Supabase:', error)
-        setErrors({ general: 'Error al crear el usuario. Inténtalo de nuevo.' })
+        setErrors({ general: `Error: ${error.message || 'Error al crear el usuario'}` })
         return
       }
 
