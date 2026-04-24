@@ -26,6 +26,20 @@ function newItem(): TraspasoItem {
   return { id: crypto.randomUUID(), texto: '' }
 }
 
+const AREA_NAMES: Record<string, string> = {
+  'equipos-asegurador': 'Asegurador y Ecosistema',
+  'equipos-patrimonial': 'Patrimonial y Finanzas',
+  'equipos-movilidad': 'Movilidad',
+  'equipos-sistemas': 'Sistemas corporativos',
+  'ciso-global': 'CISO global',
+  'plataforma-desarrollo': 'Plataforma de desarrollo',
+  'tech-support': 'Tech support',
+  'canales': 'Canales',
+  'daar-transversales': 'DAAR y otras áreas transversales',
+  'arquitectura-solucion': 'Arquitectura de solución',
+  'cto': 'CTO (Chief Technology Officer)',
+}
+
 // ─── Sub-componentes ──────────────────────────────────────────────────────────
 
 /** Textarea con label al estilo del design system */
@@ -377,11 +391,17 @@ function CanvasPageContent() {
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
               </svg>
             </div>
-            <span className="font-display text-brand-blue-dark uppercase text-sm tracking-wider">
+            <Link href="/modelo" className="font-display text-brand-blue-dark uppercase text-sm tracking-wider">
               Dinámica Mutua
-            </span>
+            </Link>
           </div>
           <div className="flex items-center gap-4">
+            <Link
+              href="/modelo"
+              className="text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors"
+            >
+              ← Volver
+            </Link>
             <SaveIndicator status={saveStatus} />
             <button
               id="btn-export-pdf"
@@ -434,7 +454,7 @@ function CanvasPageContent() {
           <div className="bg-brand-blue-dark px-6 py-4 flex items-center justify-between">
             <div>
               <p className="text-white/60 text-xs font-body uppercase tracking-widest mb-1">Nuevo modelo organizativo</p>
-              <h1 className="font-display text-white text-xl uppercase">Mi Canvas</h1>
+              <h1 className="font-display text-white text-xl uppercase">Mi Canvas: {areaId ? AREA_NAMES[areaId] || areaId : 'General'}</h1>
             </div>
             <div className="text-right">
               <p className="text-white/60 text-xs font-body uppercase tracking-wider">Última edición</p>
