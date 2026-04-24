@@ -26,12 +26,12 @@ export default function RegistroPage() {
     setLoading(true)
 
     try {
-      // Generar identificador de exactamente 9 caracteres para cumplir con char(9)
-      // Formato: M-XXXX-XX (Ej: M-1234-56)
-      const part1 = Math.floor(1000 + Math.random() * 9000)
-      const part2 = Math.floor(10 + Math.random() * 90)
-      const identificador = `M-${part1}-${part2}`
+      // Formato de 8 caracteres para asegurar cumplimiento (Ej: ID-12345)
+      const num = Math.floor(10000 + Math.random() * 90000)
+      const identificador = `ID-${num}`
       const passwordPlano = Math.random().toString(36).slice(-8)
+      
+      console.log('Intentando registro con ID:', identificador, '(longitud:', identificador.length, ')')
 
       // 1. Crear el usuario en Supabase
       const { data, error } = await supabase
