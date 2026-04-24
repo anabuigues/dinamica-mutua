@@ -11,7 +11,6 @@ import type { SesionUsuario, TraspasoItem } from '@/types'
 interface CanvasCompleto {
   id: string
   nombre: string
-  area: string
   identificador: string
   updated_at: string
   mision: string
@@ -119,7 +118,6 @@ function CanvasAjenoContent() {
         recibir,
         usuarios (
           nombre,
-          area,
           identificador
         )
       `)
@@ -138,7 +136,6 @@ function CanvasAjenoContent() {
     setCanvas({
       id: data.id,
       nombre: u?.nombre ?? '—',
-      area: u?.area ?? '—',
       identificador: u?.identificador ?? '—',
       updated_at: data.updated_at ?? '',
       mision: (data as any).mision ?? '',
@@ -235,14 +232,10 @@ function CanvasAjenoContent() {
               <p className="text-white/90 text-xs font-body">{formatDate(canvas.updated_at)}</p>
             </div>
           </div>
-          <div className="px-6 py-4 grid grid-cols-2 gap-4">
+          <div className="px-6 py-4">
             <div>
               <p className="text-xs text-neutral-500 font-body uppercase tracking-wider mb-1">Nombre</p>
               <p className="text-sm font-semibold text-neutral-800 font-body">{canvas.nombre}</p>
-            </div>
-            <div>
-              <p className="text-xs text-neutral-500 font-body uppercase tracking-wider mb-1">Área</p>
-              <p className="text-sm font-semibold text-neutral-800 font-body">{canvas.area}</p>
             </div>
           </div>
         </div>

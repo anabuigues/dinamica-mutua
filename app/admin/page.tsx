@@ -11,7 +11,6 @@ interface ParticipanteAdmin {
   userId: string
   canvasId: string | null
   nombre: string
-  area: string
   identificador: string
   created_at: string
   updated_at: string | null
@@ -108,7 +107,7 @@ export default function AdminPage() {
     // Traer todos los usuarios con su canvas (left join vía FK)
     const { data: usuarios, error: errU } = await supabase
       .from('usuarios')
-      .select('id, nombre, area, identificador, created_at')
+      .select('id, nombre, identificador, created_at')
       .neq('rol', 'superusuario')
       .order('created_at', { ascending: false })
 
@@ -128,7 +127,6 @@ export default function AdminPage() {
         userId: u.id,
         canvasId: c?.id ?? null,
         nombre: u.nombre,
-        area: u.area,
         identificador: u.identificador,
         created_at: u.created_at,
         updated_at: c?.updated_at ?? null,
@@ -230,7 +228,7 @@ export default function AdminPage() {
       {modalIndividual && (
         <ModalConfirmacion
           titulo="Eliminar participante"
-          mensaje={`Vas a eliminar el canvas y todos los datos de ${modalIndividual.nombre} (${modalIndividual.area}). El usuario no podrá acceder después de esta acción.`}
+          mensaje={`Vas a eliminar el canvas y todos los datos de ${modalIndividual.nombre}. El usuario no podrá acceder después de esta acción.`}
           textoConfirmar="Sí, eliminar"
           peligroso
           onConfirmar={() => borrarCanvasIndividual(modalIndividual)}
@@ -342,7 +340,6 @@ export default function AdminPage() {
                   <thead>
                     <tr className="border-b border-neutral-100">
                       <th className="text-left px-6 py-3 text-xs font-body text-neutral-500 uppercase tracking-wider">Participante</th>
-                      <th className="text-left px-4 py-3 text-xs font-body text-neutral-500 uppercase tracking-wider hidden sm:table-cell">Área</th>
                       <th className="text-left px-4 py-3 text-xs font-body text-neutral-500 uppercase tracking-wider hidden md:table-cell">Identificador</th>
                       <th className="text-left px-4 py-3 text-xs font-body text-neutral-500 uppercase tracking-wider hidden lg:table-cell">Registro</th>
                       <th className="text-left px-4 py-3 text-xs font-body text-neutral-500 uppercase tracking-wider hidden lg:table-cell">Últ. edición</th>
@@ -360,11 +357,9 @@ export default function AdminPage() {
                             </div>
                             <div>
                               <p className="font-semibold text-neutral-800 font-body text-sm">{p.nombre}</p>
-                              <p className="text-xs text-neutral-400 font-body sm:hidden">{p.area}</p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-4 py-4 text-neutral-600 font-body hidden sm:table-cell">{p.area}</td>
                         <td className="px-4 py-4 font-mono text-xs text-neutral-500 hidden md:table-cell">{p.identificador}</td>
                         <td className="px-4 py-4 text-xs text-neutral-400 font-body hidden lg:table-cell">{formatDate(p.created_at)}</td>
                         <td className="px-4 py-4 text-xs text-neutral-400 font-body hidden lg:table-cell">{formatDate(p.updated_at)}</td>

@@ -10,22 +10,17 @@ import { Input } from '@/components/ui/Input'
 import Card, { CardBody, CardHeader } from '@/components/ui/Card'
 import bcrypt from 'bcryptjs'
 
-const AREAS_PLACEHOLDER = 'Ej: Tecnología, Comercial, Riesgos…'
 
 export default function RegistroPage() {
   const router = useRouter()
   const [nombre, setNombre] = useState('')
-  const [area, setArea] = useState('')
   const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState<{ nombre?: string; area?: string; general?: string }>({})
+  const [errors, setErrors] = useState<{ nombre?: string; general?: string }>({})
 
   function validar() {
     const newErrors: typeof errors = {}
     if (!nombre.trim() || nombre.trim().length < 2) {
       newErrors.nombre = 'Introduce tu nombre completo (mínimo 2 caracteres)'
-    }
-    if (!area.trim()) {
-      newErrors.area = 'Indica tu área'
     }
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -49,7 +44,6 @@ export default function RegistroPage() {
         .from('usuarios')
         .insert({
           nombre: nombre.trim(),
-          area,
           identificador,
           password_hash: passwordHash,
           rol: 'participante',
@@ -80,7 +74,6 @@ export default function RegistroPage() {
         id: identificador,
         pwd: passwordPlano,
         nombre: nombre.trim(),
-        area,
       })
       router.push(`/registro/confirmacion?${params.toString()}`)
     } catch (err) {
@@ -123,7 +116,7 @@ export default function RegistroPage() {
             Crea tu perfil
           </h1>
           <p className="text-neutral-600 font-body text-sm mb-8">
-            Solo necesitamos tu nombre y tu área. No se requiere correo ni contraseña propia.
+            Solo necesitamos tu nombre. No se requiere correo ni contraseña propia.
           </p>
 
           <Card>
@@ -140,15 +133,6 @@ export default function RegistroPage() {
                   autoFocus
                 />
 
-                <Input
-                  id="area"
-                  label="Área"
-                  placeholder={AREAS_PLACEHOLDER}
-                  value={area}
-                  onChange={(e) => setArea(e.target.value)}
-                  error={errors.area}
-                  autoComplete="organization"
-                />
 
                 {errors.general && (
                   <div className="bg-semantic-error/10 border border-semantic-error/30 rounded-md px-4 py-3">

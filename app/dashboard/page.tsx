@@ -12,7 +12,6 @@ import type { SesionUsuario, TraspasoItem } from '@/types'
 interface CanvasRow {
   id: string
   nombre: string
-  area: string
   updated_at: string
   mision: string
   retos_talento: string
@@ -53,7 +52,7 @@ function RetosCategoria({
 }: {
   title: string
   color: 'blue' | 'mid' | 'light' | 'pink'
-  items: { texto: string; autor: string; area: string }[]
+  items: { texto: string; autor: string }[]
 }) {
   const colorMap = {
     blue: 'bg-brand-blue-dark',
@@ -88,7 +87,7 @@ function RetosCategoria({
           <div key={i} className="px-4 py-3 group hover:bg-neutral-50 transition-colors">
             <p className="text-sm text-neutral-800 font-body whitespace-pre-wrap">{item.texto}</p>
             <p className="text-xs text-neutral-400 font-body mt-1">
-              {item.autor} · <span className="text-brand-blue-mid">{item.area}</span>
+              {item.autor}
             </p>
           </div>
         ))}
@@ -98,7 +97,7 @@ function RetosCategoria({
 }
 
 /** Tarjeta de misión por participante */
-function MisionCard({ nombre, area, mision }: { nombre: string; area: string; mision: string }) {
+function MisionCard({ nombre, mision }: { nombre: string; mision: string }) {
   if (!mision.trim()) return null
   return (
     <div className="bg-white border border-neutral-200 rounded-lg px-4 py-3 hover:border-brand-blue-mid/40 transition-colors">
@@ -109,7 +108,6 @@ function MisionCard({ nombre, area, mision }: { nombre: string; area: string; mi
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="text-xs font-semibold text-neutral-800 font-body">{nombre}</span>
-            <span className="text-xs text-brand-blue-mid bg-brand-blue-mid/10 px-2 py-0.5 rounded-full font-body">{area}</span>
           </div>
           <p className="text-sm text-neutral-600 font-body leading-relaxed">"{mision}"</p>
         </div>
@@ -123,7 +121,6 @@ export default function DashboardPage() {
   const router = useRouter()
   const [sesion, setSesion] = useState<SesionUsuario | null>(null)
   const [datos, setDatos] = useState<CanvasRow[]>([])
-  const [filtroArea, setFiltroArea] = useState('')
   const [loading, setLoading] = useState(true)
   const [exportingPDF, setExportingPDF] = useState(false)
   const [exportingXLS, setExportingXLS] = useState(false)
@@ -162,8 +159,7 @@ export default function DashboardPage() {
         traspasar,
         recibir,
         usuarios (
-          nombre,
-          area
+          nombre
         )
       `)
       .order('updated_at', { ascending: false })
@@ -174,7 +170,6 @@ export default function DashboardPage() {
         .map((c) => ({
           id: c.id,
           nombre: c.usuarios.nombre,
-          area: c.usuarios.area,
           updated_at: c.updated_at,
           mision: c.mision ?? '',
           retos_talento: c.retos_talento ?? '',
@@ -190,14 +185,13 @@ export default function DashboardPage() {
   }
 
   // ── Filtrado ───────────────────────────────────────────────────────────────
-  const areas = Array.from(new Set(datos.map((d) => d.area))).sort()
-  const filtrados = filtroArea ? datos.filter((d) => d.area === filtroArea) : datos
+  const filtrados = datos
 
   // ── Agregación de retos ────────────────────────────────────────────────────
   function agregarRetos(campo: keyof CanvasRow) {
     return filtrados
       .filter((d) => typeof d[campo] === 'string' && (d[campo] as string).trim())
-      .map((d) => ({ texto: d[campo] as string, autor: d.nombre, area: d.area }))
+      .map((d) => ({ texto: d[campo] as string, autor: d.nombre }))
   }
 
   const retosTalento = agregarRetos('retos_talento')
@@ -211,13 +205,13 @@ export default function DashboardPage() {
 
   async function handleExportPDF() {
     setExportingPDF(true)
-    await exportarDashboardPDF(filtrados, filtroArea || undefined)
+    await exportarDashboardPDF(filtrados)
     setExportingPDF(false)
   }
 
   async function handleExportExcel() {
     setExportingXLS(true)
-    await exportarDashboardExcel(filtrados, filtroArea || undefined)
+    await exportarDashboardExcel(filtrados)
     setExportingXLS(false)
   }
 
@@ -305,7 +299,6 @@ export default function DashboardPage() {
             { label: 'Participantes', value: datos.length, icon: '👥' },
             { label: 'Misiones', value: datos.filter(d => d.mision.trim()).length, icon: '🎯' },
             { label: 'Retos totales', value: retosTalento.length + retosProcesos.length + retosCultura.length + retosOtros.length, icon: '⚡' },
-            { label: 'Áreas', value: areas.length, icon: '🗂️' },
           ].map(({ label, value, icon }) => (
             <div key={label} className="bg-white rounded-xl border border-neutral-200 shadow-sm px-5 py-4">
               <div className="text-2xl mb-1">{icon}</div>
@@ -318,28 +311,6 @@ export default function DashboardPage() {
         {/* Progreso + filtro */}
         <div className="bg-white rounded-xl border border-neutral-200 shadow-sm px-6 py-5 space-y-4">
           <ParticipacionBar total={datos.length} completados={completados} />
-          <div className="border-t border-neutral-100 pt-4 flex flex-wrap items-center gap-2">
-            <span className="text-xs text-neutral-500 font-body uppercase tracking-wider mr-1">Filtrar:</span>
-            <button
-              onClick={() => setFiltroArea('')}
-              className={`px-3 py-1.5 rounded-full text-xs font-body transition-colors ${
-                filtroArea === '' ? 'bg-brand-blue-dark text-white' : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-              }`}
-            >
-              Todas las áreas
-            </button>
-            {areas.map((area) => (
-              <button
-                key={area}
-                onClick={() => setFiltroArea(area === filtroArea ? '' : area)}
-                className={`px-3 py-1.5 rounded-full text-xs font-body transition-colors ${
-                  filtroArea === area ? 'bg-brand-blue-dark text-white' : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
-                }`}
-              >
-                {area}
-              </button>
-            ))}
-          </div>
         </div>
 
         {loading ? (
@@ -362,7 +333,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="p-5 grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {misiones.map((d) => (
-                    <MisionCard key={d.id} nombre={d.nombre} area={d.area} mision={d.mision} />
+                    <MisionCard key={d.id} nombre={d.nombre} mision={d.mision} />
                   ))}
                 </div>
               </section>
@@ -405,7 +376,7 @@ export default function DashboardPage() {
                         .map((t, i) => (
                           <div key={`${d.id}-t-${i}`} className="px-4 py-2.5 hover:bg-neutral-50 transition-colors">
                             <p className="text-sm text-neutral-800 font-body">{t.texto}</p>
-                            <p className="text-xs text-neutral-400 font-body">{d.nombre} · <span className="text-brand-blue-mid">{d.area}</span></p>
+                            <p className="text-xs text-neutral-400 font-body">{d.nombre}</p>
                           </div>
                         ))
                     ).length === 0 ? (
@@ -418,7 +389,7 @@ export default function DashboardPage() {
                         .map((t, i) => (
                           <div key={`${d.id}-t-${i}`} className="px-4 py-2.5 hover:bg-neutral-50 transition-colors">
                             <p className="text-sm text-neutral-800 font-body">{t.texto}</p>
-                            <p className="text-xs text-neutral-400 font-body">{d.nombre} · <span className="text-brand-blue-mid">{d.area}</span></p>
+                            <p className="text-xs text-neutral-400 font-body">{d.nombre}</p>
                           </div>
                         ))
                     )}
@@ -437,7 +408,7 @@ export default function DashboardPage() {
                         .map((r, i) => (
                           <div key={`${d.id}-r-${i}`} className="px-4 py-2.5 hover:bg-neutral-50 transition-colors">
                             <p className="text-sm text-neutral-800 font-body">{r.texto}</p>
-                            <p className="text-xs text-neutral-400 font-body">{d.nombre} · <span className="text-brand-pink">{d.area}</span></p>
+                            <p className="text-xs text-neutral-400 font-body">{d.nombre}</p>
                           </div>
                         ))
                     ).length === 0 ? (
@@ -449,8 +420,7 @@ export default function DashboardPage() {
                         .filter((r) => r.texto.trim())
                         .map((r, i) => (
                           <div key={`${d.id}-r-${i}`} className="px-4 py-2.5 hover:bg-neutral-50 transition-colors">
-                            <p className="text-sm text-neutral-800 font-body">{r.texto}</p>
-                            <p className="text-xs text-neutral-400 font-body">{d.nombre} · <span className="text-brand-pink">{d.area}</span></p>
+                            <p className="text-xs text-neutral-400 font-body">{d.nombre}</p>
                           </div>
                         ))
                     )}

@@ -102,16 +102,15 @@ function ConfirmacionContent() {
   const identificador = searchParams.get('id') || ''
   const password = searchParams.get('pwd') || ''
   const nombre = searchParams.get('nombre') || ''
-  const area = searchParams.get('area') || ''
 
   const [sessionSaved, setSessionSaved] = useState(false)
 
   const saveSession = useCallback(() => {
-    if (identificador && nombre && area && !sessionSaved) {
-      guardarSesion({ id: '', nombre, area, identificador, rol: 'participante' })
+    if (identificador && nombre && !sessionSaved) {
+      guardarSesion({ id: '', nombre, identificador, rol: 'participante' })
       setSessionSaved(true)
     }
-  }, [identificador, nombre, area, sessionSaved])
+  }, [identificador, nombre, sessionSaved])
 
   useEffect(() => {
     if (!identificador || !password) {
@@ -198,7 +197,7 @@ function ConfirmacionContent() {
           <div>
             <p className="text-xs text-neutral-500 font-body">Registrado como</p>
             <p className="text-sm font-semibold text-neutral-800 font-body">
-              {nombre} · {area}
+              {nombre}
             </p>
           </div>
         </div>

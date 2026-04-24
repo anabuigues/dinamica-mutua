@@ -7,7 +7,6 @@
 create table if not exists public.usuarios (
   id uuid primary key default gen_random_uuid(),
   nombre text not null,
-  area text not null,
   identificador char(9) unique not null,  -- formato XXXX-XXXX (8 chars + guión = 9)
   password_hash text not null,
   rol text not null default 'participante' check (rol in ('participante', 'superusuario')),

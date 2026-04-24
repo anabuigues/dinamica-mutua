@@ -1,7 +1,6 @@
 export interface Usuario {
   id: string
   nombre: string
-  area: string
   identificador: string
   password_hash: string
   rol: 'participante' | 'superusuario'
@@ -29,7 +28,6 @@ export interface TraspasoItem {
 export interface SesionUsuario {
   id: string
   nombre: string
-  area: string
   identificador: string
   rol: 'participante' | 'superusuario'
 }
