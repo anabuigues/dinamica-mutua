@@ -90,7 +90,7 @@ export default function LoginPage() {
               <form onSubmit={handleLogin} className="space-y-6">
                 <div>
                   <label className="block text-xs font-body font-bold text-neutral-500 uppercase tracking-wider mb-2">
-                    Identificador Mutua
+                    Tu ID de acceso
                   </label>
                   <input
                     type="text"
@@ -164,7 +164,7 @@ export default function LoginPage() {
 
       <footer className="bg-neutral-50 py-4 text-center border-t border-neutral-200">
         <p className="text-neutral-400 text-[10px] font-body uppercase tracking-widest">
-          Dinámica organizativa interna — Mutua Madrileña 2026
+          Dinámica organizativa interna — Offsite 27 de Abril
         </p>
       </footer>
     </main>

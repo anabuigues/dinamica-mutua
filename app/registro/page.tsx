@@ -149,7 +149,7 @@ export default function RegistroPage() {
 
       <footer className="bg-neutral-50 py-4 text-center border-t border-neutral-200">
         <p className="text-neutral-400 text-[10px] font-body uppercase tracking-widest">
-          Dinámica organizativa interna — Mutua Madrileña 2026
+          Dinámica organizativa interna — Offsite 27 de Abril
         </p>
       </footer>
     </main>

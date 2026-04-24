@@ -28,7 +28,7 @@ export default function HomePage() {
           {/* Heading */}
           <h1 className="font-display text-white text-4xl md:text-5xl font-bold uppercase text-center mb-4 leading-tight">
             Dinámica<br />
-            <span className="text-brand-pink">Mutua</span>
+            <span className="text-brand-pink">Offsite</span>
           </h1>
 
           <p className="text-white/85 text-center text-base font-body mb-12 max-w-md mx-auto leading-relaxed">
@@ -75,7 +75,7 @@ export default function HomePage() {
       {/* Footer */}
       <footer className="bg-brand-blue-dark/95 py-4 text-center">
         <p className="text-white/40 text-xs font-body">
-          © 2026 Mutua Madrileña — Dinámica organizativa interna
+          © 2026 Offsite 27 de Abril — Dinámica organizativa interna
         </p>
       </footer>
     </main>
