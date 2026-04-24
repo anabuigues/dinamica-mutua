@@ -239,28 +239,7 @@ export default function DashboardPage() {
               En directo
             </span>
             {/* Botones exportar */}
-            <button
-              id="btn-export-pdf"
-              onClick={handleExportPDF}
-              disabled={exportingPDF || loading}
-              className="hidden sm:flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-brand-blue-mid/30 text-brand-blue-mid hover:bg-brand-blue-mid hover:text-white transition-all font-body disabled:opacity-40"
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
-              </svg>
-              {exportingPDF ? 'PDF…' : 'PDF'}
-            </button>
-            <button
-              id="btn-export-excel"
-              onClick={handleExportExcel}
-              disabled={exportingXLS || loading}
-              className="hidden sm:flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-semantic-success/40 text-semantic-success hover:bg-semantic-success hover:text-white transition-all font-body disabled:opacity-40"
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-4-4h3V9h2v4h3l-4 4z"/>
-              </svg>
-              {exportingXLS ? 'Excel…' : 'Excel'}
-            </button>
+
             <Link href="/canvas" className="text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors">
               Mi canvas
             </Link>

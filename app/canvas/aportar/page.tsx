@@ -403,23 +403,7 @@ function CanvasPageContent() {
               ← Volver
             </Link>
             <SaveIndicator status={saveStatus} />
-            <button
-              id="btn-export-pdf"
-              onClick={handleExportPDF}
-              disabled={exporting || loading}
-              className="hidden sm:flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-brand-blue-mid/30 text-brand-blue-mid hover:bg-brand-blue-mid hover:text-white transition-all font-body disabled:opacity-40"
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
-              </svg>
-              {exporting ? 'Exportando…' : 'PDF'}
-            </button>
-            <Link
-              href="/dashboard"
-              className="hidden sm:block text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors"
-            >
-              Dashboard
-            </Link>
+
             <Link
               href="/canvas/otros"
               className="hidden sm:block text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors"

@@ -265,9 +265,7 @@ export default function AdminPage() {
               <span className="text-white/70 text-xs font-body uppercase tracking-wider">Panel de administración</span>
             </div>
             <div className="flex items-center gap-4">
-              <Link href="/dashboard" className="text-white/70 hover:text-white text-sm font-body transition-colors">
-                Dashboard
-              </Link>
+
               <button
                 onClick={() => { cerrarSesion(); router.push('/') }}
                 className="text-white/60 hover:text-semantic-error text-xs font-body transition-colors"
