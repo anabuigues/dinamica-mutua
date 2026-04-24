@@ -201,11 +201,8 @@ function CanvasAjenoContent() {
               </svg>
               Solo lectura
             </span>
-            <Link href="/canvas/otros" className="text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors">
-              ← Equipo
-            </Link>
-            <Link href="/canvas" className="text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors">
-              Mi canvas
+            <Link href="/modelo" className="text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors">
+              ← Volver al modelo
             </Link>
             <button
               onClick={() => { cerrarSesion(); router.push('/') }}

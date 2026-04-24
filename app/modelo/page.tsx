@@ -112,12 +112,7 @@ export default function ModeloOrganizativoPage() {
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <Link
-              href="/dashboard"
-              className="text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors"
-            >
-              Dashboard
-            </Link>
+
             <button
               onClick={() => {
                 cerrarSesion()

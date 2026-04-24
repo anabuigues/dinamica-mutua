@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { obtenerSesion, cerrarSesion } from '@/lib/session'
-import { exportarCanvasPDF } from '@/lib/exportar'
+
 import type { SesionUsuario, TraspasoItem } from '@/types'
 
 // ─── Tipos locales ────────────────────────────────────────────────────────────
@@ -24,6 +24,20 @@ type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function newItem(): TraspasoItem {
   return { id: crypto.randomUUID(), texto: '' }
+}
+
+const AREA_NAMES: Record<string, string> = {
+  'equipos-asegurador': 'Asegurador y Ecosistema',
+  'equipos-patrimonial': 'Patrimonial y Finanzas',
+  'equipos-movilidad': 'Movilidad',
+  'equipos-sistemas': 'Sistemas corporativos',
+  'ciso-global': 'CISO global',
+  'plataforma-desarrollo': 'Plataforma de desarrollo',
+  'tech-support': 'Tech support',
+  'canales': 'Canales',
+  'daar-transversales': 'DAAR y otras áreas transversales',
+  'arquitectura-solucion': 'Arquitectura de solución',
+  'cto': 'CTO (Chief Technology Officer)',
 }
 
 // ─── Sub-componentes ──────────────────────────────────────────────────────────
@@ -201,7 +215,6 @@ function CanvasPageContent() {
   })
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle')
   const [loading, setLoading] = useState(true)
-  const [exporting, setExporting] = useState(false)
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const searchParams = useSearchParams()
   const areaId = searchParams.get('area')
@@ -334,23 +347,6 @@ function CanvasPageContent() {
     }))
   }
 
-  // ── Exportar PDF ────────────────────────────────────────────────────────────
-  async function handleExportPDF() {
-    if (!sesion) return
-    setExporting(true)
-    await exportarCanvasPDF({
-      nombre: sesion.nombre,
-      updated_at: updatedAt ?? new Date().toISOString(),
-      mision: canvas.mision,
-      retos_talento: canvas.retos_talento,
-      retos_procesos: canvas.retos_procesos,
-      retos_cultura: canvas.retos_cultura,
-      retos_otros: canvas.retos_otros,
-      traspasar: canvas.traspasar,
-      recibir: canvas.recibir,
-    })
-    setExporting(false)
-  }
 
   // ── Loading / sin sesión ───────────────────────────────────────────────────
   if (loading) {
@@ -377,29 +373,19 @@ function CanvasPageContent() {
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
               </svg>
             </div>
-            <span className="font-display text-brand-blue-dark uppercase text-sm tracking-wider">
+            <Link href="/modelo" className="font-display text-brand-blue-dark uppercase text-sm tracking-wider">
               Dinámica Mutua
-            </span>
+            </Link>
           </div>
           <div className="flex items-center gap-4">
-            <SaveIndicator status={saveStatus} />
-            <button
-              id="btn-export-pdf"
-              onClick={handleExportPDF}
-              disabled={exporting || loading}
-              className="hidden sm:flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-brand-blue-mid/30 text-brand-blue-mid hover:bg-brand-blue-mid hover:text-white transition-all font-body disabled:opacity-40"
-            >
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
-              </svg>
-              {exporting ? 'Exportando…' : 'PDF'}
-            </button>
             <Link
-              href="/dashboard"
-              className="hidden sm:block text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors"
+              href="/modelo"
+              className="text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors"
             >
-              Dashboard
+              ← Volver
             </Link>
+            <SaveIndicator status={saveStatus} />
+
             <Link
               href="/canvas/otros"
               className="hidden sm:block text-sm text-brand-blue-mid hover:text-brand-blue-dark font-body transition-colors"
@@ -434,7 +420,7 @@ function CanvasPageContent() {
           <div className="bg-brand-blue-dark px-6 py-4 flex items-center justify-between">
             <div>
               <p className="text-white/60 text-xs font-body uppercase tracking-widest mb-1">Nuevo modelo organizativo</p>
-              <h1 className="font-display text-white text-xl uppercase">Mi Canvas</h1>
+              <h1 className="font-display text-white text-xl uppercase">Mi Canvas: {areaId ? AREA_NAMES[areaId] || areaId : 'General'}</h1>
             </div>
             <div className="text-right">
               <p className="text-white/60 text-xs font-body uppercase tracking-wider">Última edición</p>
