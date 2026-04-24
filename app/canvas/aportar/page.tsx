@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState, useCallback, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useEffect, useState, useCallback, useRef, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { obtenerSesion, cerrarSesion } from '@/lib/session'
@@ -184,7 +184,8 @@ function SaveIndicator({ status }: { status: SaveStatus }) {
 }
 
 // ─── Página principal ─────────────────────────────────────────────────────────
-export default function CanvasPage() {
+
+function CanvasPageContent() {
   const router = useRouter()
   const [sesion, setSesion] = useState<SesionUsuario | null>(null)
   const [canvasId, setCanvasId] = useState<string | null>(null)
@@ -202,24 +203,33 @@ export default function CanvasPage() {
   const [loading, setLoading] = useState(true)
   const [exporting, setExporting] = useState(false)
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const searchParams = useSearchParams()
+  const areaId = searchParams.get('area')
   const isFirstLoad = useRef(true)
 
   // ── Cargar sesión y canvas ──────────────────────────────────────────────────
   useEffect(() => {
     const s = obtenerSesion()
-    if (!s) { router.replace('/'); return }
+    if (!s || !areaId) { router.replace(s ? '/modelo' : '/'); return }
     setSesion(s)
 
     async function cargarCanvas() {
+      const { data: userData } = await supabase
+        .from('usuarios')
+        .select('id')
+        .eq('identificador', s!.identificador)
+        .single()
+
+      if (!userData) {
+        setLoading(false)
+        return
+      }
+
       const { data, error } = await supabase
         .from('canvas')
         .select('*')
-        .eq('usuario_id', (await supabase
-          .from('usuarios')
-          .select('id')
-          .eq('identificador', s!.identificador)
-          .single()
-        ).data?.id)
+        .eq('usuario_id', userData.id)
+        .eq('area_id', areaId)
         .single()
 
       if (!error && data) {
@@ -243,15 +253,32 @@ export default function CanvasPage() {
     }
 
     cargarCanvas()
-  }, [router])
+  }, [router, areaId])
 
   // ── Guardado automático con debounce ───────────────────────────────────────
-  const guardarCanvas = useCallback(async (data: CanvasData, cId: string) => {
+  const guardarCanvas = useCallback(async (data: CanvasData, cId: string | null) => {
+    if (!sesion || !areaId) return
     setSaveStatus('saving')
     const now = new Date().toISOString()
-    const { error } = await supabase
+    
+    // Necesitamos el usuario_id real
+    const { data: userData } = await supabase
+      .from('usuarios')
+      .select('id')
+      .eq('identificador', sesion.identificador)
+      .single()
+      
+    if (!userData) {
+      setSaveStatus('error')
+      return
+    }
+
+    const { data: upsertData, error } = await supabase
       .from('canvas')
-      .update({
+      .upsert({
+        ...(cId ? { id: cId } : {}),
+        usuario_id: userData.id,
+        area_id: areaId,
         mision: data.mision,
         retos_talento: data.retos_talento,
         retos_procesos: data.retos_procesos,
@@ -260,23 +287,27 @@ export default function CanvasPage() {
         traspasar: data.traspasar,
         recibir: data.recibir,
         updated_at: now,
-      })
-      .eq('id', cId)
+      }, { onConflict: 'usuario_id,area_id' })
+      .select('id')
+      .single()
 
-    if (!error) setUpdatedAt(now)
+    if (!error) {
+      setUpdatedAt(now)
+      if (!cId && upsertData) setCanvasId(upsertData.id)
+    }
     setSaveStatus(error ? 'error' : 'saved')
     if (!error) setTimeout(() => setSaveStatus('idle'), 3000)
-  }, [])
+  }, [sesion, areaId])
 
   useEffect(() => {
     if (isFirstLoad.current) { isFirstLoad.current = false; return }
-    if (!canvasId) return
+    if (!sesion || !areaId) return
 
     if (saveTimer.current) clearTimeout(saveTimer.current)
     saveTimer.current = setTimeout(() => guardarCanvas(canvas, canvasId), 1200)
 
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current) }
-  }, [canvas, canvasId, guardarCanvas])
+  }, [canvas, canvasId, guardarCanvas, sesion, areaId])
 
   // ── Helpers de estado ──────────────────────────────────────────────────────
   function updateField(field: keyof CanvasData, value: string) {
@@ -557,5 +588,20 @@ export default function CanvasPage() {
         </p>
       </div>
     </main>
+  )
+}
+
+export default function CanvasPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-neutral-50">
+        <svg className="animate-spin w-8 h-8 text-brand-blue-mid" viewBox="0 0 24 24" fill="none">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+        </svg>
+      </div>
+    }>
+      <CanvasPageContent />
+    </Suspense>
   )
 }

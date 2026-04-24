@@ -57,17 +57,7 @@ export default function RegistroPage() {
         return
       }
 
-      // Crear canvas vacío para el usuario
-      await supabase.from('canvas').insert({
-        usuario_id: data.id,
-        mision: '',
-        retos_talento: '',
-        retos_procesos: '',
-        retos_cultura: '',
-        retos_otros: '',
-        traspasar: [],
-        recibir: [],
-      })
+
 
       // Redirigir a confirmación con los datos
       const params = new URLSearchParams({
