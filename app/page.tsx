@@ -22,7 +22,7 @@ export default function HomePage() {
       <section className="hero-section flex-1 flex flex-col items-center justify-center">
         <div className="max-w-2xl mx-auto animate-slide-up">
           <div className="flex items-center justify-center mb-8">
-            <LogoMutua className="scale-125" variant="light" />
+            <LogoMutua variant="light" />
           </div>
 
           {/* Heading */}
