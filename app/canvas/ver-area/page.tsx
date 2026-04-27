@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { obtenerSesion, cerrarSesion } from '@/lib/session'
 import LogoMutua from '@/components/LogoMutua'
+import { descargarPDF } from '@/lib/exportarPdf'
 import type { SesionUsuario, TraspasoItem } from '@/types'
 
 // ─── Tipos ──────────────────────────────────────────────────────────────────
@@ -184,12 +185,25 @@ function VerAreaContent() {
 
       <div className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-8 space-y-8 animate-slide-up">
         {/* Cabecera del área */}
-        <div className="bg-brand-blue-dark rounded-xl px-6 py-6 shadow-md border-b-4 border-brand-pink">
-          <p className="text-white/60 text-xs font-body uppercase tracking-widest mb-1">Información agregada</p>
-          <h1 className="font-display text-white text-3xl uppercase">{areaNombre}</h1>
-          <p className="text-white/80 text-sm font-body mt-2">
-            Consulta todas las visiones y aportaciones del equipo para esta área.
-          </p>
+        <div className="bg-brand-blue-dark rounded-xl px-6 py-6 shadow-md border-b-4 border-brand-pink flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+          <div>
+            <p className="text-white/60 text-xs font-body uppercase tracking-widest mb-1">Información agregada</p>
+            <h1 className="font-display text-white text-3xl uppercase">{areaNombre}</h1>
+            <p className="text-white/80 text-sm font-body mt-2">
+              Consulta todas las visiones y aportaciones del equipo para esta área.
+            </p>
+          </div>
+          
+          <button
+            onClick={() => descargarPDF(areaNombre, aportaciones, allTraspasar, allRecibir)}
+            disabled={aportaciones.length === 0}
+            className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg border border-white/20 transition-all font-semibold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+            </svg>
+            Descargar PDF
+          </button>
         </div>
 
         {aportaciones.length === 0 ? (
